@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/new/gpsterminal">
+        <file>image/telit.png</file>
+    </qresource>
+</RCC>
