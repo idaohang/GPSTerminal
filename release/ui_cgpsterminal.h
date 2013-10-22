@@ -19,8 +19,6 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
@@ -50,14 +48,7 @@ public:
     QComboBox *m_cbSpeedList;
     QLabel *m_lblTextSpeed;
     QGroupBox *groupBox_2;
-    QWidget *tbModule;
-    QGroupBox *groupBox;
-    QVBoxLayout *verticalLayout_2;
-    QPushButton *m_pbListScriptModule;
-    QListWidget *m_lwListScriptModule;
-    QHBoxLayout *horizontalLayout_2;
-    QLabel *m_lblTextCountFiles;
-    QLineEdit *m_leCountFiles;
+    QWidget *tab_2;
     QPlainTextEdit *m_teTerminal;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -156,74 +147,16 @@ public:
         verticalLayout->addWidget(groupBox_2);
 
         m_tbControlPanel->addTab(tbGeneral, QString());
-        tbModule = new QWidget();
-        tbModule->setObjectName(QStringLiteral("tbModule"));
-        groupBox = new QGroupBox(tbModule);
-        groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(10, 10, 211, 258));
-        QSizePolicy sizePolicy3(QSizePolicy::Minimum, QSizePolicy::Preferred);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
-        groupBox->setSizePolicy(sizePolicy3);
-        verticalLayout_2 = new QVBoxLayout(groupBox);
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        m_pbListScriptModule = new QPushButton(groupBox);
-        m_pbListScriptModule->setObjectName(QStringLiteral("m_pbListScriptModule"));
-        QSizePolicy sizePolicy4(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(m_pbListScriptModule->sizePolicy().hasHeightForWidth());
-        m_pbListScriptModule->setSizePolicy(sizePolicy4);
-
-        verticalLayout_2->addWidget(m_pbListScriptModule);
-
-        m_lwListScriptModule = new QListWidget(groupBox);
-        m_lwListScriptModule->setObjectName(QStringLiteral("m_lwListScriptModule"));
-        QSizePolicy sizePolicy5(QSizePolicy::Minimum, QSizePolicy::Expanding);
-        sizePolicy5.setHorizontalStretch(0);
-        sizePolicy5.setVerticalStretch(0);
-        sizePolicy5.setHeightForWidth(m_lwListScriptModule->sizePolicy().hasHeightForWidth());
-        m_lwListScriptModule->setSizePolicy(sizePolicy5);
-
-        verticalLayout_2->addWidget(m_lwListScriptModule);
-
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        m_lblTextCountFiles = new QLabel(groupBox);
-        m_lblTextCountFiles->setObjectName(QStringLiteral("m_lblTextCountFiles"));
-        QSizePolicy sizePolicy6(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        sizePolicy6.setHorizontalStretch(0);
-        sizePolicy6.setVerticalStretch(0);
-        sizePolicy6.setHeightForWidth(m_lblTextCountFiles->sizePolicy().hasHeightForWidth());
-        m_lblTextCountFiles->setSizePolicy(sizePolicy6);
-
-        horizontalLayout_2->addWidget(m_lblTextCountFiles);
-
-        m_leCountFiles = new QLineEdit(groupBox);
-        m_leCountFiles->setObjectName(QStringLiteral("m_leCountFiles"));
-        sizePolicy4.setHeightForWidth(m_leCountFiles->sizePolicy().hasHeightForWidth());
-        m_leCountFiles->setSizePolicy(sizePolicy4);
-        m_leCountFiles->setMaxLength(50);
-        m_leCountFiles->setAlignment(Qt::AlignCenter);
-        m_leCountFiles->setReadOnly(true);
-
-        horizontalLayout_2->addWidget(m_leCountFiles);
-
-
-        verticalLayout_2->addLayout(horizontalLayout_2);
-
-        m_tbControlPanel->addTab(tbModule, QString());
+        tab_2 = new QWidget();
+        tab_2->setObjectName(QStringLiteral("tab_2"));
+        m_tbControlPanel->addTab(tab_2, QString());
 
         horizontalLayout->addWidget(m_tbControlPanel);
 
         m_teTerminal = new QPlainTextEdit(centralWidget);
         m_teTerminal->setObjectName(QStringLiteral("m_teTerminal"));
         QFont font3;
-        font3.setPointSize(12);
+        font3.setPointSize(10);
         font3.setBold(true);
         font3.setWeight(75);
         m_teTerminal->setFont(font3);
@@ -250,9 +183,6 @@ public:
 
         retranslateUi(CGPSTerminal);
 
-        m_tbControlPanel->setCurrentIndex(0);
-
-
         QMetaObject::connectSlotsByName(CGPSTerminal);
     } // setupUi
 
@@ -265,10 +195,7 @@ public:
         m_lblTextSpeed->setText(QApplication::translate("CGPSTerminal", "\320\241\320\272\320\276\321\200\320\276\321\201\321\202\321\214", 0));
         groupBox_2->setTitle(QApplication::translate("CGPSTerminal", "\320\243\320\277\321\200\320\260\320\262\320\273\320\265\320\275\320\270\320\265", 0));
         m_tbControlPanel->setTabText(m_tbControlPanel->indexOf(tbGeneral), QApplication::translate("CGPSTerminal", "\320\236\320\261\321\211\320\270\320\265", 0));
-        groupBox->setTitle(QApplication::translate("CGPSTerminal", "\320\234\320\276\320\264\321\203\320\273\321\214", 0));
-        m_pbListScriptModule->setText(QApplication::translate("CGPSTerminal", "AT#LSCRIPT", 0));
-        m_lblTextCountFiles->setText(QApplication::translate("CGPSTerminal", "\320\232\320\276\320\273\320\270\321\207\320\265\321\201\321\202\320\262\320\276", 0));
-        m_tbControlPanel->setTabText(m_tbControlPanel->indexOf(tbModule), QApplication::translate("CGPSTerminal", "\320\234\320\276\320\264\321\203\320\273\321\214", 0));
+        m_tbControlPanel->setTabText(m_tbControlPanel->indexOf(tab_2), QApplication::translate("CGPSTerminal", "Tab 2", 0));
     } // retranslateUi
 
 };
