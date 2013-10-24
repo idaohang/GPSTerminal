@@ -47,5 +47,8 @@
             void slotReadData();
             void slotClickButton();
             void slotReadScripts();
+            void slotProcessingData(QByteArray data); // слот обработки принятых данных
+        signals:
+            void readyData(QByteArray); // сигнал о готовности данных считанных из com-порта
     };
 #endif // CGPSTERMINAL_H

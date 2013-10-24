@@ -13,6 +13,7 @@ CGPSTerminal::CGPSTerminal(QWidget *parent) : QMainWindow(parent), m_ui(new Ui::
     connect(m_port, SIGNAL(readyRead()), this, SLOT(slotReadData()));
     connect(m_ui->m_pbListScriptModule, SIGNAL(clicked()), this, SLOT(slotClickButton()));
     connect(m_ui->m_pbReadScripts, SIGNAL(clicked()), this, SLOT(slotReadScripts()));
+    connect(this, SIGNAL(readyData(QByteArray)), this, SLOT(slotProcessingData(QByteArray)));
 }
 //---------------------------
 CGPSTerminal::~CGPSTerminal()
@@ -163,85 +164,17 @@ void CGPSTerminal::closeEvent(QCloseEvent *event)
 void CGPSTerminal::slotReadData()
 {
     QByteArray data = QByteArray(m_port->readAll());
-    static QByteArray listData;
-    QString strData;
-    static QString strListData;
+    static QByteArray tdata;
 
-    switch(m_terminal.terminal_id)
+    QString eof = "\r\nOK\r\n";
+
+    tdata += data;
+
+    if(tdata.lastIndexOf(eof) == (tdata.length() - eof.length()))
     {
-        case MAIN_TERMINAL:
-            m_ui->m_teTerminal->insertPlainText(data);
-        break;
-
-        case MODULE_TERMINAL:
-            strData = data;
-
-            m_ui->m_lwListScriptModule->clear();
-            m_ui->m_leCountFiles->clear();
-
-            m_ui->m_teTerminal->insertPlainText(strData);
-
-            if(strData.contains(QRegExp("OK\\r\\n$")))
-            {
-                strListData += strData;
-
-                int pos = 0, count = 0;
-
-                QRegExp regexp("\"([A-Za-z0-9]+\\.[A-Za-z0-9]+)\"");
-
-                while((pos = regexp.indexIn(strListData, pos)) != -1)
-                {
-                    m_ui->m_lwListScriptModule->addItem(regexp.cap(1));
-                    QString str = regexp.cap(1);
-                    pos += regexp.matchedLength();
-                    count++;
-                }
-
-                m_ui->m_leCountFiles->setText(QString::number(count));
-
-                strListData = "";
-                m_terminal.terminal_id = MAIN_TERMINAL;
-            }
-            else
-            {
-                strListData += strData;
-            }
-        break;
-
-        case SCRIPT_TERMINAL:
-            if(data.contains("OK\r\n"))
-            {
-                listData += data;
-
-                QString strSub = "AT#RSCRIPT=" + m_terminal.property;
-                listData.remove(listData.indexOf(strSub, 0), strSub.length());
-                listData = listData.trimmed();
-                strSub = "<<<";
-                listData.remove(listData.indexOf(strSub, 0), strSub.length());
-
-                strSub = "OK";
-                listData.remove(listData.indexOf(strSub, 0), strSub.length());
-                listData = listData.trimmed();
-
-                qDebug() << "\nsize data = " << listData.size();
-                QFile file("q:/" + m_terminal.property);
-                file.open(QIODevice::WriteOnly);
-
-                file.write(listData);
-                file.close();
-
-                m_terminal.terminal_id = MAIN_TERMINAL;
-                listData = "";
-            }
-            else
-            {
-                listData += data;
-            }
-        break;
+        emit readyData(tdata);
+        tdata = "";
     }
-
-   QScrollBar *bar = m_ui->m_teTerminal->verticalScrollBar();
-   bar->setValue(bar->maximum());
 }
 //----------------------------
 void CGPSTerminal::closePort()
@@ -284,4 +217,62 @@ void CGPSTerminal::slotReadScripts()
 void CGPSTerminal::writtenData(QString request)
 {
     m_port->write(request.toLatin1());
+}
+//----------------------------------------------------
+void CGPSTerminal::slotProcessingData(QByteArray data)
+{
+    switch(m_terminal.terminal_id)
+    {
+        case MAIN_TERMINAL:
+            m_ui->m_teTerminal->insertPlainText(data);
+        break;
+
+        case MODULE_TERMINAL:
+        {
+            int pos = 0, count = 0;
+            QString strData = data;
+            QRegExp regexp("\"([A-Za-z0-9]+\\.[A-Za-z0-9]+)\"");
+
+            m_ui->m_lwListScriptModule->clear();
+            m_ui->m_leCountFiles->clear();
+
+            m_ui->m_teTerminal->insertPlainText(data);
+
+            while((pos = regexp.indexIn(strData, pos)) != -1)
+            {
+                m_ui->m_lwListScriptModule->addItem(regexp.cap(1));
+                QString str = regexp.cap(1);
+                pos += regexp.matchedLength();
+                count++;
+            }
+
+            m_ui->m_leCountFiles->setText(QString::number(count));
+            m_terminal.terminal_id = MAIN_TERMINAL;
+
+            break;
+        }
+
+        case SCRIPT_TERMINAL:
+                QString strSub = "AT#RSCRIPT=" + m_terminal.property;
+                data.remove(data.indexOf(strSub, 0), strSub.length());
+                data = data.trimmed();
+                strSub = "<<<";
+                data.remove(data.indexOf(strSub, 0), strSub.length());
+
+                strSub = "OK";
+                data = data.trimmed();
+                data.remove(data.lastIndexOf(strSub), strSub.length());
+                data = data.trimmed();
+
+                QFile file("q:/" + m_terminal.property);
+                file.open(QIODevice::ReadWrite);
+                file.write(data);
+                file.close();
+
+                m_terminal.terminal_id = MAIN_TERMINAL;
+        break;
+    }
+
+    QScrollBar *bar = m_ui->m_teTerminal->verticalScrollBar();
+    bar->setValue(bar->maximum());
 }
